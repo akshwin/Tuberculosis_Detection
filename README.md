@@ -1,1 +1,1 @@
-# Pneumonia_Detection_Using_Hybrid_Model
+# TBXNET PRO : An Hybrid CNN-RNN Architecture for Tuberculosis Detection
