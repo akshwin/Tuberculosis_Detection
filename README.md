@@ -1,48 +1,91 @@
-# Pneumonia Detection from X-Ray Images
 
-This Streamlit application uses a deep learning model to predict pneumonia from X-ray images. The model, "pneumonia.h5," is employed for analysis. The user-friendly interface allows users to upload X-ray images and receive instant predictions.
 
-## Overview
+# TBXPro: Tuberculosis Detection using CNN-BiLSTM Hybrid Model
 
-- **Model**: Utilizes a pre-trained deep learning model for pneumonia prediction.
-- **Labels**: The model classifies images into "No Pneumonia" (0) and "Pneumonia" (1).
-- **User Interface**: Created using Streamlit for easy interaction and quick analysis.
+This repository presents **TBXPro**, a deep learning model designed to detect **Tuberculosis (TB)** from chest X-ray images. TBXPro combines the spatial feature extraction power of **Convolutional Neural Networks (CNNs)** with the temporal pattern recognition of **Bidirectional LSTM (Bi-LSTM)** to enhance diagnostic accuracy.
 
-## Setup and Execution
+---
 
-### Prerequisites
+## 🔬 Project Overview
 
-- Ensure Python is installed on your system.
-- Install required packages using the following command:
+Tuberculosis is a life-threatening bacterial infection that primarily affects the lungs. Early diagnosis is crucial to control its spread and begin treatment. TBXPro aims to assist healthcare professionals by providing a reliable AI-based system that can analyze chest X-rays and predict TB infection with high accuracy.
 
-    ```bash
-    pip install streamlit Pillow numpy tensorflow
-    ```
+---
 
-### Execution
+## 🛠️ Key Features
 
-1. **Clone the Repository:**
+- 📁 Preprocessing pipeline for chest X-ray enhancement and augmentation
+- 🧠 **TBXPro**: A hybrid model combining **CNN** and **Bi-LSTM**
+- 📊 Metrics: Accuracy, Precision, Recall, F1-Score, AUC-ROC
+- 
+---
 
-    ```bash
-    git clone https://github.com/your_username/pneumonia-detection.git
-    cd pneumonia-detection
-    ```
+## 📂 Dataset
 
-2. **Run the Application:**
+We use a combination of open-source chest X-ray datasets for training and evaluation:
 
-    ```bash
-    streamlit run app.py
-    ```
+- **Montgomery County X-ray Set** (USA)
+- **Shenzhen Hospital X-ray Set** (China)
+- (Optional) **NIH Chest X-ray14** dataset
 
-3. **Upload an Image:**
-    - Use the file uploader to select an X-ray image (JPG, JPEG, or PNG).
+All X-rays are labeled as:
+- **TB Positive**
+- **Normal (TB Negative)**
 
-4. **View Prediction:**
-    - The processed image and prediction result will be displayed.
-    - An error message indicates "Pneumonia Detected," and success triggers celebratory balloons for "No Pneumonia."
-  
-   
-5. **Run the Application Online :**
+---
 
-https://pneumonia-predictor-app.streamlit.app/
+## 🧠 Model Architecture - TBXPro
 
+**TBXPro** is a hybrid architecture:
+
+- **CNN layers** extract spatial and structural features from X-ray images.
+- **Bi-LSTM layers** capture long-range dependencies and subtle variations in features.
+- Fully connected layers perform final classification.
+
+This fusion boosts the model’s ability to handle complex patterns in medical imaging.
+
+---
+
+## 🚀 Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/TBXPro-TB-Detection.git
+   cd TBXPro-TB-Detection
+   ```
+
+2. Install required libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run training:
+   ```bash
+   python train_tb_model.py
+   ```
+
+4. Evaluate and visualize results:
+   ```bash
+   python evaluate.py
+   ``
+
+
+## 🔮 Future Enhancements
+
+- 🖥️ Deploy TBXPro as a web/mobile diagnostic tool
+- 🧪 Add support for multi-disease detection (e.g., Pneumonia, COVID-19)
+- 🧠 Explore attention mechanisms or transformers for further accuracy gains
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 📧 Contact
+
+- **Name:** Akshwin T  
+- **Email:** your_email@example.com  
+- **LinkedIn:** [Your LinkedIn Profile](https://www.linkedin.com/)
