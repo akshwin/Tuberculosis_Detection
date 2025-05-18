@@ -26,7 +26,7 @@ def processed_img(img_path):
 # Main Streamlit app
 def run():
     # Page title and description
-    st.markdown("<h1 style='text-align: center; color: #0a9396;'>🫁 TB-EnsembleX: AI-based Tuberculosis Detection</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #0a9396;'>🫁 TB-EnsembleX: Tuberculosis Detection </h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 18px;'>An ensemble transfer learning model for high-accuracy TB screening from chest X-rays</p>", unsafe_allow_html=True)
     st.markdown("---")
 
@@ -34,19 +34,13 @@ def run():
     with st.sidebar:
         st.header("📌 About TB-EnsembleX")
         st.markdown("""
-        **TB-EnsembleX** is a novel **ensemble-based transfer learning architecture** for **automated tuberculosis detection** from chest X-ray images.
+        **TB-EnsembleX** is a novel **ensemble-based transfer learning architecture** for **automated tuberculosis detection** from chest X-ray images with **99%** accuracy.
 
         ### 🧠 Key Features:
         - ✅ Uses **VGG16, VGG19, InceptionV3, and Xception** for diverse feature extraction.
         - 🔄 Applies **SMOTE** for class balancing.
         - 📉 Uses **PCA** for dimensionality reduction.
         - 🗳️ Employs a **Voting-based Logistic Regression Ensemble** for final classification.
-
-        ### 📊 Performance:
-        - **Accuracy:** 99%
-        - **Metrics:** Precision, Recall, F1-Score, Confusion Matrix
-
-        🩺 A reliable CAD system to aid TB screening in clinical settings.
         """)
 
         st.markdown("---")
