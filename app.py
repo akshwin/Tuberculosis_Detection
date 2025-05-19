@@ -72,7 +72,11 @@ def run():
     # Process image
     if img_file is not None:
         img = Image.open(img_file).resize((250, 250))
-        st.image(img, caption="Uploaded Image", use_container_width=300)
+
+        # Create three columns and display the image in the center one
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(img, caption="Uploaded Image", width=250)
 
         # Save image locally
         upload_dir = "./upload_image"
