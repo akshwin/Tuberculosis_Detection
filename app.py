@@ -30,22 +30,40 @@ def run():
     st.markdown("<p style='text-align: center; font-size: 18px;'>An ensemble transfer learning model for high-accuracy TB screening from chest X-rays</p>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # Sidebar content
+    # Sidebar with structured layout
     with st.sidebar:
-        st.header("📌 About TB-EnsembleX")
+        st.header("🧠 Project Info")
         st.markdown("""
-        **TB-EnsembleX** is a novel **ensemble-based transfer learning architecture** for **automated tuberculosis detection** from chest X-ray images with **99%** accuracy.
-
-        ### 🧠 Key Features:
-        - ✅ Uses **VGG16, VGG19, InceptionV3, and Xception** for diverse feature extraction.
-        - 🔄 Applies **SMOTE** for class balancing.
-        - 📉 Uses **PCA** for dimensionality reduction.
-        - 🗳️ Employs a **Voting-based Logistic Regression Ensemble** for final classification.
+        This application uses deep learning models to detect **tuberculosis** from **chest X-ray** images.
+        Powered by **Convolutional Neural Networks (CNNs)** and **Transfer Learning** trained on real medical data.
         """)
 
+        with st.expander("🔍 Model Details"):
+            st.markdown("""
+            - Ensemble of **VGG16, VGG19, InceptionV3, Xception**
+            - Features concatenated and reduced via **PCA**
+            - **SMOTE** applied to balance class distribution
+            - Final classifier: **Voting-based Logistic Regression Ensemble**
+            - Achieved **99% accuracy**
+            """)
+
+        with st.expander("📂 Classes Detected"):
+            st.markdown("""
+            - ✅ **No Tuberculosis**
+            - 🚨 **Tuberculosis**
+            """)
+
+        with st.expander("📁 Dataset Info"):
+            st.markdown("""
+            - Real-world **Chest X-ray datasets**
+            - Preprocessed and resized to 224x224
+            - Balanced using **SMOTE**
+            - Augmented with standard transformations
+            """)
+
         st.markdown("---")
-        st.markdown("**👨‍💻 Developed by:** Akshwin T")
-        st.markdown("📧 **Email:** [akshwin.projects@gmail.com](mailto:akshwin.projects@gmail.com)")
+        st.markdown("👨‍💻 **Developed by:** Akshwin T")
+        st.markdown("📬 **Contact:** [akshwint.2003@gmail.com](mailto:akshwint.2003@gmail.com)")
 
     # File uploader
     st.subheader("📤 Upload a Chest X-Ray Image:")
