@@ -72,7 +72,7 @@ def run():
     # Process image
     if img_file is not None:
         img = Image.open(img_file).resize((250, 250))
-        st.image(img, caption="Uploaded Image", use_column_width=True)
+        st.image(img, caption="Uploaded Image", use_container_width=300)
 
         # Save image locally
         upload_dir = "./upload_image"
@@ -88,16 +88,6 @@ def run():
             st.error("🚨 **TUBERCULOSIS DETECTED!** Please consult a medical professional.")
         else:
             st.success("✅ **NO TUBERCULOSIS DETECTED!**")
-
-        # Abstract expander
-        with st.expander("📄 Read Full Abstract"):
-            st.markdown("""
-            This study introduces **TB-EnsembleX**, a novel ensemble-based transfer learning architecture for automated tuberculosis detection from chest X-ray images.
-            The architecture integrates multiple pretrained CNNs including **VGG16**, **VGG19**, **InceptionV3**, and **Xception** to extract diverse features.
-            These are concatenated and processed using **SMOTE** for class balancing, followed by **PCA** for dimensionality reduction.
-            A **Voting-based ensemble** using Logistic Regression models is trained on the reduced feature space.
-            The model achieves an impressive **accuracy of 99%**, making it a powerful tool for computer-aided TB screening in clinical settings.
-            """)
 
 # Run the app
 if __name__ == "__main__":
