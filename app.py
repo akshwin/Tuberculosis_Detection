@@ -25,10 +25,8 @@ def processed_img(img_path):
 
 # Main Streamlit app
 def run():
-    # Page title and description
-    st.markdown("<h1 style='text-align: center; color: #0a9396;'>🫁 TB-EnsembleX: Tuberculosis Detection </h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 18px;'>An ensemble transfer learning model for high-accuracy TB screening from chest X-rays</p>", unsafe_allow_html=True)
-    st.markdown("---")
+    
+    st.set_page_config(page_title="Tuberculosis Detector", layout="centered")
 
     # Sidebar with structured layout
     with st.sidebar:
@@ -65,6 +63,10 @@ def run():
         st.markdown("👨‍💻 **Developed by:** Akshwin T")
         st.markdown("📬 **Contact:** [akshwint.2003@gmail.com](mailto:akshwint.2003@gmail.com)")
 
+    # Page title and description
+    st.markdown("<h1 style='text-align: center; color: #0a9396;'>🫁 TB-EnsembleX: Tuberculosis Detection </h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 18px;'>An ensemble transfer learning model for high-accuracy TB screening from chest X-rays</p>", unsafe_allow_html=True)
+    
     # File uploader
     st.subheader("📤 Upload a Chest X-Ray Image:")
     img_file = st.file_uploader("Choose an image", type=['jpg', 'jpeg', 'png'])
