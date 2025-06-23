@@ -1,100 +1,129 @@
-import streamlit as st 
+import streamlit as st
+
+# Set page config FIRST
+st.set_page_config(page_title="Alzheimer's MRI Classifier", layout="wide")
+
+import numpy as np
+import tensorflow as tf
 from PIL import Image
-from tensorflow.keras.utils import load_img, img_to_array
-import numpy as np 
-from keras.models import load_model 
 import os
+import uuid
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
-# Load the trained model
-model = load_model("tuberculosis.h5")
+# ---- Constants ---- #
+CLASS_NAMES = ['Mild Demented', 'Moderate Demented', 'Non Demented', 'Very Mild Demented']
+LAST_CONV_LAYER_NAME = 'conv3'
+UPLOAD_FOLDER = 'static/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Label mapping
-labels = {0: 'No Tuberculosis', 1: 'Tuberculosis'}
-tuberculosis_set = {'Tuberculosis'}
+# ---- Load model ---- #
+@st.cache_resource
+def load_trained_model():
+    return tf.keras.models.load_model('model.h5')
 
-# Prediction function
-def processed_img(img_path):
-    img = load_img(img_path, target_size=(224, 224, 3))
-    img = img_to_array(img)
-    img = img / 255.0
-    img = np.expand_dims(img, axis=0)
-    prediction = model.predict(img)
-    y_class = prediction.argmax(axis=-1)
-    result = labels[int(y_class)]
-    return result.capitalize()
+model = load_trained_model()
 
-# Main Streamlit app
-def run():
+# ---- Utility functions ---- #
+def preprocess_image(image_path, target_size=(128, 128)):
+    img = Image.open(image_path).convert('L')
+    img = img.resize(target_size)
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=(0, -1))  # Shape: (1, H, W, 1)
+    return img
+
+def make_gradcam_heatmap(img_array, model, last_conv_layer_name):
+    grad_model = tf.keras.models.Model(
+        [model.inputs],
+        [model.get_layer(last_conv_layer_name).output, model.output]
+    )
+
+    with tf.GradientTape() as tape:
+        conv_outputs, predictions = grad_model(img_array)
+        pred_index = tf.argmax(predictions[0])
+        class_channel = predictions[:, pred_index]
+
+    grads = tape.gradient(class_channel, conv_outputs)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+    conv_outputs = conv_outputs[0]
+    heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
+    heatmap = tf.squeeze(heatmap)
+    heatmap = tf.maximum(heatmap, 0) / tf.reduce_max(heatmap + 1e-10)
+    return heatmap.numpy()
+
+def overlay_heatmap(image_path, heatmap):
+    original_img = Image.open(image_path).convert('RGB')
+    heatmap_resized = Image.fromarray(np.uint8(255 * heatmap)).resize(original_img.size)
+
+    fig, ax = plt.subplots()
+    ax.imshow(original_img)
+    ax.imshow(heatmap_resized, cmap='jet', alpha=0.4)
+    ax.axis('off')
+
+    output_path = os.path.join(UPLOAD_FOLDER, f"heatmap_{uuid.uuid4()}.png")
+    fig.savefig(output_path, bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+    return output_path
+
+# ---- Sidebar ---- #
+with st.sidebar:
+    st.title("🧠 About the App")
+    st.markdown("""
+    This application uses a **Deep Learning model** to classify brain MRI scans into four stages of **Alzheimer's Disease**:
     
-    st.set_page_config(page_title="Tuberculosis Detector", layout="centered")
+    - 🟢 Non Demented  
+    - 🟡 Very Mild Demented  
+    - 🟠 Mild Demented  
+    - 🔴 Moderate Demented
 
-    # Sidebar with structured layout
-    with st.sidebar:
-        st.header("🧠 Project Info")
-        st.markdown("""
-        This application uses deep learning models to detect **tuberculosis** from **chest X-ray** images.
-        Powered by **Convolutional Neural Networks (CNNs)** and **Transfer Learning** trained on real medical data.
-        """)
+    ---
+    **How to use:**
+    1. Upload a brain MRI image (JPG/PNG).
+    2. The model will predict the stage.
+    3. A Grad-CAM heatmap will be generated to visualize important regions.
 
-        with st.expander("🔍 Model Details"):
-            st.markdown("""
-            - Ensemble of **VGG16, VGG19, InceptionV3, Xception**
-            - Features concatenated and reduced via **PCA**
-            - **SMOTE** applied to balance class distribution
-            - Final classifier: **Voting-based Logistic Regression Ensemble**
-            - Achieved **99% accuracy**
-            """)
+    ---
+    **What is Grad-CAM?**  
+    Grad-CAM highlights the parts of the brain image that were most important for the model's prediction. This increases **transparency** and helps in **interpretability**.
 
-        with st.expander("📂 Classes Detected"):
-            st.markdown("""
-            - ✅ **No Tuberculosis**
-            - 🚨 **Tuberculosis**
-            """)
+    ---
+    📩 *For academic or medical collaborations, contact: akshwint.2003@gmail.com*
+    """)
 
-        with st.expander("📁 Dataset Info"):
-            st.markdown("""
-            - Real-world **Chest X-ray datasets**
-            - Preprocessed and resized to 224x224
-            - Balanced using **SMOTE**
-            - Augmented with standard transformations
-            """)
+# ---- Main UI ---- #
+st.markdown("<h1 style='text-align: center; color: #2C3E50;'>🧠 Alzheimer's Stage Detection from MRI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Upload an MRI brain scan to classify the Alzheimer's stage and see the Grad-CAM heatmap.</p>", unsafe_allow_html=True)
+st.markdown("---")
 
-        st.markdown("---")
-        st.markdown("👨‍💻 **Developed by:** Akshwin T")
-        st.markdown("📬 **Contact:** [akshwint.2003@gmail.com](mailto:akshwint.2003@gmail.com)")
+uploaded_file = st.file_uploader("📤 Upload an MRI Image (JPG/PNG)", type=["png", "jpg", "jpeg"])
 
-    # Page title and description
-    st.markdown("<h1 style='text-align: center; color: #0a9396;'>🫁 TB-EnsembleX: Tuberculosis Detection </h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 18px;'>An ensemble transfer learning model for high-accuracy TB screening from chest X-rays</p>", unsafe_allow_html=True)
-    
-    # File uploader
-    st.subheader("📤 Upload a Chest X-Ray Image:")
-    img_file = st.file_uploader("Choose an image", type=['jpg', 'jpeg', 'png'])
+if uploaded_file:
+    try:
+        temp_filename = f"{uuid.uuid4()}.png"
+        img_path = os.path.join(UPLOAD_FOLDER, temp_filename)
+        with open(img_path, "wb") as f:
+            f.write(uploaded_file.read())
 
-    # Process image
-    if img_file is not None:
-        img = Image.open(img_file).resize((250, 250))
+        with st.spinner("🔎 Analyzing..."):
+            preprocessed = preprocess_image(img_path)
+            prediction = model.predict(preprocessed)
+            pred_class = CLASS_NAMES[np.argmax(prediction)]
+            heatmap = make_gradcam_heatmap(preprocessed, model, LAST_CONV_LAYER_NAME)
+            heatmap_path = overlay_heatmap(img_path, heatmap)
 
-        # Create three columns and display the image in the center one
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image(img_path, caption="🧾 Uploaded MRI", use_column_width=True)
         with col2:
-            st.image(img, caption="Uploaded Image", width=250)
+            st.image(heatmap_path, caption="🔥 Grad-CAM Heatmap", use_column_width=True)
 
-        # Save image locally
-        upload_dir = "./upload_image"
-        os.makedirs(upload_dir, exist_ok=True)
-        save_path = os.path.join(upload_dir, img_file.name)
-        with open(save_path, "wb") as f:
-            f.write(img_file.getbuffer())
-
-        # Predict and display result
-        result = processed_img(save_path)
         st.markdown("---")
-        if result in tuberculosis_set:
-            st.error("🚨 **TUBERCULOSIS DETECTED!** Please consult a medical professional.")
-        else:
-            st.success("✅ **NO TUBERCULOSIS DETECTED!**")
+        st.markdown(
+            f"<div style='text-align:center; font-size:24px; font-weight:bold; color:#1ABC9C;'>🧬 Predicted Stage: <span style='color:#2C3E50;'>{pred_class}</span></div>",
+            unsafe_allow_html=True
+        )
 
-# Run the app
-if __name__ == "__main__":
-    run()
+    except Exception as e:
+        st.error(f"⚠️ Error: {str(e)}")
