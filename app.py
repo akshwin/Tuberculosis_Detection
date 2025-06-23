@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Set page config FIRST
-st.set_page_config(page_title="Alzheimer's MRI Classifier", layout="wide")
+st.set_page_config(page_title="Alzheimer's MRI Classifier")
 
 import numpy as np
 import tensorflow as tf
