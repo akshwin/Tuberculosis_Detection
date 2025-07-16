@@ -1,4 +1,11 @@
+
 <h1 align="center">🫁 TB-EnsembleX: Ensemble-Based Transfer Learning for Tuberculosis Detection</h1>
+
+<p align="center">
+  <a href="https://tuberculosis-detector.streamlit.app/">
+    <img src="https://img.shields.io/badge/🚀 Launch%20App-Try%20Now-brightgreen?style=for-the-badge" alt="Streamlit App" />
+  </a>
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Model-Ensemble%20CNN%20+%20Voting%20Classifier-blue?style=for-the-badge" />
@@ -126,6 +133,8 @@ pip install -r requirements.txt
 python train_model.py
 ```
 
+---
+
 ## 📊 Evaluation & Results
 
 The results include:
@@ -135,6 +144,7 @@ The results include:
 * 🧮 Classification Report
 * 📈 Visualizations for PCA + Classifier Decisions
 
+---
 
 ## 🛣 Future Scope
 

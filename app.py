@@ -26,11 +26,11 @@ def processed_img(img_path):
 # Main Streamlit app
 def run():
     
-    st.set_page_config(page_title="Tuberculosis Detector", layout="centered")
+    st.set_page_config(page_title="Tuberculosis Detector", layout="centered", page_icon="🫁")
 
     # Sidebar with structured layout
     with st.sidebar:
-        st.header("🧠 Project Info")
+        st.header("🫁 TB-EnsembleX Info")
         st.markdown("""
         This application uses deep learning models to detect **tuberculosis** from **chest X-ray** images.
         Powered by **Convolutional Neural Networks (CNNs)** and **Transfer Learning** trained on real medical data.
@@ -71,21 +71,35 @@ def run():
     st.subheader("📤 Upload a Chest X-Ray Image:")
     img_file = st.file_uploader("Choose an image", type=['jpg', 'jpeg', 'png'])
 
+    # Sample image button
+    sample_used = False
+    sample_image_path = "./upload_image/tuberculosis.jpg"
+
+    if st.button("📁 Use Sample Image"):
+        if os.path.exists(sample_image_path):
+            img_file = open(sample_image_path, "rb")
+            sample_used = True
+        else:
+            st.error("❌ Sample image not found. Please make sure 'sample.jpg' exists in 'upload_image' folder.")
+
     # Process image
     if img_file is not None:
-        img = Image.open(img_file).resize((250, 250))
-
-        # Create three columns and display the image in the center one
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image(img, caption="Uploaded Image", width=250)
-
-        # Save image locally
         upload_dir = "./upload_image"
         os.makedirs(upload_dir, exist_ok=True)
-        save_path = os.path.join(upload_dir, img_file.name)
-        with open(save_path, "wb") as f:
-            f.write(img_file.getbuffer())
+
+        if not sample_used:
+            img = Image.open(img_file).resize((250, 250))
+            save_path = os.path.join(upload_dir, img_file.name)
+            with open(save_path, "wb") as f:
+                f.write(img_file.getbuffer())
+        else:
+            img = Image.open(sample_image_path).resize((250, 250))
+            save_path = sample_image_path
+
+        # Display the image in the center column
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.image(img, caption="Selected Image", width=250)
 
         # Predict and display result
         result = processed_img(save_path)
