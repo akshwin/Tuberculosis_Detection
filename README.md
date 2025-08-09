@@ -75,23 +75,22 @@ All images are resized to 224×224, augmented, normalized, and preprocessed for 
 
 ```
 
-Input Image (224x224x3)
-↓
-Feature Extraction using:
-
-* VGG16
-* VGG19
-* InceptionV3
-* Xception
-  ↓
+  Input Image (224x224x3)
+          ↓
+  Feature Extraction using:
+      * VGG16
+      * VGG19
+      * InceptionV3
+      * Xception
+          ↓
   Concatenation of Feature Vectors
-  ↓
+          ↓
   SMOTE (Synthetic Minority Oversampling)
-  ↓
+          ↓
   PCA (Dimensionality Reduction)
-  ↓
+          ↓
   Voting Classifier (Logistic Regression)
-  ↓
+          ↓  
   TB / No TB Prediction
 
 ````
